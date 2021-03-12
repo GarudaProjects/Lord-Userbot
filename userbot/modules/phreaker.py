@@ -27,6 +27,30 @@ async def _(event):
             await event.edit(f"{response.message.message}")
             await event.client.delete_messages(response.message.message)
 
+@register(outgoing=True, pattern=r"^\.ipinfo(?: |$)(.*)")
+async def _(event):
+    if event.fwd_from:
+        return
+    link = event.pattern_match.group(1)
+    chat = "@scriptkiddies_bot"  # pylint:disable=E0602
+    nmap = f"ipinfo"  # pylint:disable=E0602
+    await event.edit("Processing....")
+    async with bot.conversation("@scriptkiddies_bot") as conv:
+        try:
+            response = conv.wait_event(
+                events.NewMessage(
+                    incoming=True,
+                    from_users=510263282))
+            await conv.send_message(f'/{ipinfo} {link}')
+            response = await response
+        except YouBlockedUserError:
+            await event.reply("Unblock @ scriptkiddies_bot dulu Goblok!!")
+            return
+        else:
+            await event.edit(f"{response.message.message}")
+            await event.client.delete_messages(response.message.message)
+
+
 
 @register(outgoing=True, pattern=r"^\.subd(?: |$)(.*)")
 async def _(event):
